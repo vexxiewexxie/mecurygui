@@ -1,0 +1,402 @@
+local Mercury = loadstring(game:HttpGet("https://raw.githubusercontent.com/deeeity/mercury-lib/master/src.lua"))()
+local GUI = Mercury:Create{
+    Name = "x3 @7xgc",
+    Size = UDim2.fromOffset(600, 400),
+    Theme = Mercury.Themes.Dark,
+    Link = "https://github.com/deeeity/mercury-lib"
+}
+local Tab = GUI:Tab{
+	Name = "visual nih",
+	Icon = "rbxassetid://13321848342"
+}
+Tab:Button{
+Name = "box esp",
+Description = nil,
+Callback = function()
+local esp = loadstring(game:HttpGet("https://raw.githubusercontent.com/andrewc0de/Roblox/main/Dependencies/ESP.lua"))()
+esp:Toggle(true)
+
+-- Configure ESP settings
+esp.Boxes = true
+esp.Names = false
+esp.Tracers = false
+esp.Players = true
+
+-- Add an object listener to the workspace to detect enemy models
+esp:AddObjectListener(workspace, {
+   Name = "soldier_model",
+   Type = "Model",
+   Color = Color3.fromRGB(255, 0, 4),
+
+   -- Specify the primary part of the model as the HumanoidRootPart
+   PrimaryPart = function(obj)
+       local root
+       repeat
+           root = obj:FindFirstChild("HumanoidRootPart")
+           task.wait()
+       until root
+       return root
+   end,
+
+   -- Use a validator function to ensure that models do not have the "friendly_marker" child
+   Validator = function(obj)
+       task.wait(1)
+       if obj:FindFirstChild("friendly_marker") then
+           return false
+       end
+       return true
+   end,
+
+   -- Set a custom name to use for the enemy models
+   CustomName = "the opps",
+
+   -- Enable the ESP for enemy models
+   IsEnabled = "enemy"
+})
+
+-- Enable the ESP for enemy models
+esp.enemy = true
+
+-- Wait for the game to load fully before applying hitboxes
+task.wait(1)
+
+-- Apply hitboxes to all existing enemy models in the workspace
+for _, v in pairs(workspace:GetDescendants()) do
+   if v.Name == "soldier_model" and v:IsA("Model") and not v:FindFirstChild("friendly_marker") then
+       local pos = v:FindFirstChild("HumanoidRootPart").Position
+       for _, bp in pairs(workspace:GetChildren()) do
+           if bp:IsA("BasePart") then
+               local distance = (bp.Position - pos).Magnitude
+               if distance <= 5 then
+                   bp.Transparency = trans
+                   bp.Size = size
+               end
+           end
+       end
+   end
+end
+
+-- Function to handle when a new descendant is added to the workspace
+local function handleDescendantAdded(descendant)
+   task.wait(1)
+
+   -- If the new descendant is an enemy model and notifications are enabled, send a notification
+   if descendant.Name == "soldier_model" and descendant:IsA("Model") and not descendant:FindFirstChild("friendly_marker") then
+       if notifications then
+           game.StarterGui:SetCore("SendNotification", {
+               Title = "yo",
+               Text = "somb js joined ima change the hitbox bra",
+               Icon = "",
+               Duration = 3
+           })
+       end
+
+       -- Apply hitboxes to the new enemy model
+       local pos = descendant:FindFirstChild("HumanoidRootPart").Position
+       for _, bp in pairs(workspace:GetChildren()) do
+           if bp:IsA("BasePart") then
+               local distance = (bp.Position - pos).Magnitude
+               if distance <= 5 then
+                   bp.Transparency = trans
+                   bp.Size = size
+               end
+           end
+       end
+   end
+end
+
+-- Connect the handleDescendantAdded function to the DescendantAdded event of the workspace
+task.spawn(function()
+   game.Workspace.DescendantAdded:Connect(handleDescendantAdded)
+end)
+
+-- Store the time when the code finishes executing
+local finish = os.clock()
+
+-- Calculate how long the code took to run and determine a rating for the loading speed
+local time = finish - start
+local rating
+if time < 3 then
+   rating = "fast"
+elseif time < 5 then
+   rating = "acceptable"
+else
+   rating = "slow"
+end
+
+-- Send a notification showing how long the code took to run and its rating
+game.StarterGui:SetCore("SendNotification", {
+   Title = "Script",
+   Text = string.format("Script loaded in %.2f seconds (%s loading)", time, rating),
+   Icon = "",
+   Duration = 5
+})
+  end
+}
+
+Tab:Button{
+	Name = "highlight JAJAJA",
+	Description = nil,
+	Callback = function()
+    local FillColor = Color3.fromRGB(252, 96, 94)
+local DepthMode = "AlwaysOnTop"
+local FillTransparency = 0.5
+local OutlineColor = Color3.fromRGB(255,255,255)
+local OutlineTransparency = 0
+
+local CoreGui = game:FindService("CoreGui")
+local Players = game:FindService("Players")
+local lp = Players.LocalPlayer
+local connections = {}
+
+local Storage = Instance.new("Folder")
+Storage.Parent = CoreGui
+Storage.Name = "Highlight_Storage"
+
+local function Highlight(plr)
+    local Highlight = Instance.new("Highlight")
+    Highlight.Name = plr.Name
+    Highlight.FillColor = FillColor
+    Highlight.DepthMode = DepthMode
+    Highlight.FillTransparency = FillTransparency
+    Highlight.OutlineColor = OutlineColor
+    Highlight.OutlineTransparency = 0
+    Highlight.Parent = Storage
+    
+    local plrchar = plr.Character
+    if plrchar then
+        Highlight.Adornee = plrchar
+    end
+
+    connections[plr] = plr.CharacterAdded:Connect(function(char)
+        Highlight.Adornee = char
+    end)
+end
+
+Players.PlayerAdded:Connect(Highlight)
+for i,v in next, Players:GetPlayers() do
+    Highlight(v)
+end
+
+Players.PlayerRemoving:Connect(function(plr)
+    local plrname = plr.Name
+    if Storage[plrname] then
+        Storage[plrname]:Destroy()
+    end
+    if connections[plr] then
+        connections[plr]:Disconnect()
+    end
+end)
+    end
+}
+Tab:Button{
+	Name = "tracer esp",
+	Description = nil,
+	Callback = function()
+    local esp = loadstring(game:HttpGet("https://raw.githubusercontent.com/andrewc0de/Roblox/main/Dependencies/ESP.lua"))()
+esp:Toggle(true)
+
+-- Configure ESP settings
+esp.Boxes = false
+esp.Names = true
+esp.Tracers = true
+esp.Players = true
+
+-- Add an object listener to the workspace to detect enemy models
+esp:AddObjectListener(workspace, {
+   Name = "soldier_model",
+   Type = "Model",
+   Color = Color3.fromRGB(255, 0, 4),
+
+   -- Specify the primary part of the model as the HumanoidRootPart
+   PrimaryPart = function(obj)
+       local root
+       repeat
+           root = obj:FindFirstChild("HumanoidRootPart")
+           task.wait()
+       until root
+       return root
+   end,
+
+   -- Use a validator function to ensure that models do not have the "friendly_marker" child
+   Validator = function(obj)
+       task.wait(1)
+       if obj:FindFirstChild("friendly_marker") then
+           return false
+       end
+       return true
+   end,
+
+   -- Set a custom name to use for the enemy models
+   CustomName = "?",
+
+   -- Enable the ESP for enemy models
+   IsEnabled = "enemy"
+})
+
+-- Enable the ESP for enemy models
+esp.enemy = true
+
+-- Wait for the game to load fully before applying hitboxes
+task.wait(1)
+
+-- Apply hitboxes to all existing enemy models in the workspace
+for _, v in pairs(workspace:GetDescendants()) do
+   if v.Name == "soldier_model" and v:IsA("Model") and not v:FindFirstChild("friendly_marker") then
+       local pos = v:FindFirstChild("HumanoidRootPart").Position
+       for _, bp in pairs(workspace:GetChildren()) do
+           if bp:IsA("BasePart") then
+               local distance = (bp.Position - pos).Magnitude
+               if distance <= 5 then
+                   bp.Transparency = trans
+                   bp.Size = size
+               end
+           end
+       end
+   end
+end
+
+-- Function to handle when a new descendant is added to the workspace
+local function handleDescendantAdded(descendant)
+   task.wait(1)
+
+   -- If the new descendant is an enemy model and notifications are enabled, send a notification
+   if descendant.Name == "soldier_model" and descendant:IsA("Model") and not descendant:FindFirstChild("friendly_marker") then
+       if notifications then
+           game.StarterGui:SetCore("SendNotification", {
+               Title = "Script",
+               Text = "[Warning] New Enemy Spawned! Applied hitboxes.",
+               Icon = "",
+               Duration = 3
+           })
+       end
+
+       -- Apply hitboxes to the new enemy model
+       local pos = descendant:FindFirstChild("HumanoidRootPart").Position
+       for _, bp in pairs(workspace:GetChildren()) do
+           if bp:IsA("BasePart") then
+               local distance = (bp.Position - pos).Magnitude
+               if distance <= 5 then
+                   bp.Transparency = trans
+                   bp.Size = size
+               end
+           end
+       end
+   end
+end
+
+-- Connect the handleDescendantAdded function to the DescendantAdded event of the workspace
+task.spawn(function()
+   game.Workspace.DescendantAdded:Connect(handleDescendantAdded)
+end)
+
+-- Store the time when the code finishes executing
+local finish = os.clock()
+
+-- Calculate how long the code took to run and determine a rating for the loading speed
+local time = finish - start
+local rating
+if time < 3 then
+   rating = "fast"
+elseif time < 5 then
+   rating = "acceptable"
+else
+   rating = "slow"
+end
+
+-- Send a notification showing how long the code took to run and its rating
+game.StarterGui:SetCore("SendNotification", {
+   Title = "Script",
+   Text = string.format("Script loaded in %.2f seconds (%s loading)", time, rating),
+   Icon = "",
+   Duration = 5
+})
+    end
+}
+local Tab = GUI:Tab{
+	Name = "combat LEL :pppp",
+	Icon = "rbxassetid://8569322835"
+}
+Tab:Button{
+	Name = "aimbot fov (100 fov cz im new)",
+	Description = nil,
+	Callback = function()
+local fov = 100
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local Cam = game.Workspace.CurrentCamera
+
+local FOVring = Drawing.new("Circle")
+FOVring.Visible = true
+FOVring.Thickness = 2
+FOVring.Color = Color3.fromRGB(275 , 90, 95)
+FOVring.Filled = false
+FOVring.Radius = fov
+FOVring.Position = Cam.ViewportSize / 2
+
+local function updateDrawings()
+    local camViewportSize = Cam.ViewportSize
+    FOVring.Position = camViewportSize / 2
+end
+
+local function onKeyDown(input)
+    if input.KeyCode == Enum.KeyCode.Delete then
+        RunService:UnbindFromRenderStep("FOVUpdate")
+        FOVring:Remove()
+    end
+end
+
+UserInputService.InputBegan:Connect(onKeyDown)
+
+local function lookAt(target)
+    local lookVector = (target - Cam.CFrame.Position).unit
+    local newCFrame = CFrame.new(Cam.CFrame.Position, Cam.CFrame.Position + lookVector)
+    Cam.CFrame = newCFrame
+end
+
+local function getClosestPlayerInFOV(trg_part)
+    local nearest = nil
+    local last = math.huge
+    local playerMousePos = Cam.ViewportSize / 2
+
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= Players.LocalPlayer then
+            local part = player.Character and player.Character:FindFirstChild(trg_part)
+            if part then
+                local ePos, isVisible = Cam:WorldToViewportPoint(part.Position)
+                local distance = (Vector2.new(ePos.x, ePos.y) - playerMousePos).Magnitude
+
+                if distance < last and isVisible and distance < fov then
+                    last = distance
+                    nearest = player
+                end
+            end
+        end
+    end
+
+    return nearest
+end
+
+RunService.RenderStepped:Connect(function()
+    updateDrawings()
+    local closest = getClosestPlayerInFOV("Head")
+    if closest and closest.Character:FindFirstChild("Head") then
+        lookAt(closest.Character.Head.Position)
+    end
+end)
+    end
+}
+Tab:Button{
+	Name = "head hitbox expander",
+	Description = nil,
+	Callback = function()
+_G.HeadSize = 15 _G.Disabled = true game:GetService('RunService').RenderStepped:connect(function() if _G.Disabled then for i,v in next, game:GetService('Players'):GetPlayers() do if v.Name ~= game:GetService('Players').LocalPlayer.Name then pcall(function() v.Character.Head.Size = Vector3.new(_G.HeadSize,_G.HeadSize,_G.HeadSize) v.Character.Head.Transparency = 1 v.Character.Head.BrickColor = BrickColor.new("Red") v.Character.Head.Material = "Neon" v.Character.Head.CanCollide = false v.Character.Head.Massless = true end) end end end end)
+    end
+}
+GUI:Credit{
+	Name = "more coming up",
+	Description = "Heh @7xgc",
+	V3rm = "ee u",
+	Discord = "Niggaaaa"
+}
